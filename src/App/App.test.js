@@ -40,10 +40,9 @@ describe('The FX Service App', () => {
   })
 
   describe('Capturing the GBP value entered by a user', () => {
-    describe('When the value is valid', () => {
-      it('stores it on state', () => {
-        const wrapper = shallow(<App />)
-      })
+    it('is an empty string by default', () => {
+      const wrapper = shallow(<App />)
+      expect(wrapper.state().value).toBe('')
     })
   })
 })
