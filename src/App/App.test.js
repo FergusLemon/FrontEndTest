@@ -2,6 +2,9 @@ import React from 'react'
 import App from './App'
 import { shallow, mount } from 'enzyme'
 import getElement from '../utils/getElement.js'
+import mockAxios from 'axios'
+
+const DEFAULT_VALUE = ''
 
 describe('The FX Service App', () => {
   it('renders without crashing', () => {
@@ -40,9 +43,74 @@ describe('The FX Service App', () => {
   })
 
   describe('Capturing the GBP value entered by a user', () => {
+    const MAX = 999999999999.9999
     it('is an empty string by default', () => {
       const wrapper = shallow(<App />)
-      expect(wrapper.state().value).toBe('')
+      expect(wrapper.state().value).toBe(DEFAULT_VALUE)
+    })
+
+    describe('When the user enters a valid input', () => {
+      const MIN = 0
+      const ev = { currentTarget: { value: MIN } }
+      it('updates the value on state - case minimum amount', () => {
+        const wrapper = shallow(<App />)
+        wrapper
+          .find('PriceInput')
+          .props()
+          .handleChange(ev)
+        expect(wrapper.state().value).toBe(MIN)
+      })
+      it('updates the value on state - case maximum amount', () => {
+        const wrapper = shallow(<App />)
+        ev.currentTarget.value = MAX
+        wrapper
+          .find('PriceInput')
+          .props()
+          .handleChange(ev)
+        expect(wrapper.state().value).toBe(MAX)
+      })
+    })
+
+    describe('When the user enters an invalid input', () => {
+      const NEGATIVE_VALUE = -1
+      const EMPTY_ARRAY = []
+      const FIVE_DP = 0.12345
+      const ev = { currentTarget: { value: NEGATIVE_VALUE } }
+      it('does not update the value on state - case negative input', () => {
+        const wrapper = shallow(<App />)
+        wrapper
+          .find('PriceInput')
+          .props()
+          .handleChange(ev)
+        expect(wrapper.state().value).toBe(DEFAULT_VALUE)
+      })
+      it('does not update the value on state - case empty array', () => {
+        const wrapper = shallow(<App />)
+        ev.currentTarget.value = EMPTY_ARRAY
+        wrapper
+          .find('PriceInput')
+          .props()
+          .handleChange(ev)
+        expect(wrapper.state().value).toBe(DEFAULT_VALUE)
+      })
+      it('does not update the value on state - case beyond maximum value', () => {
+        const wrapper = shallow(<App />)
+        ev.currentTarget.value = MAX + 1
+        wrapper
+          .find('PriceInput')
+          .props()
+          .handleChange(ev)
+        expect(wrapper.state().value).toBe(DEFAULT_VALUE)
+      })
+      it('does not update the value on state - case 5 decimal places', () => {
+        const wrapper = shallow(<App />)
+        ev.currentTarget.value = FIVE_DP
+        wrapper
+          .find('PriceInput')
+          .props()
+          .handleChange(ev)
+        expect(wrapper.state().value).toBe(DEFAULT_VALUE)
+      })
     })
   })
 })
