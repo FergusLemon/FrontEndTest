@@ -1,0 +1,30 @@
+.button-container {
+  position: relative;
+  top: 85px;
+  left: 65px;
+  height: 40px;
+  width: 200px;
+}
+
+.submit-rate-request {
+  position: absolute;
+  left: 25px;
+  background-color: #ffffff;
+  color: #282c34;
+  border: 2px solid #282c34;
+  border-radius: 5px;
+  outline: none;
+}
+
+button:active {
+  padding: 4px 8px 4px;
+  background-color: #ffffff;
+  color: #000034;
+  border: 2px solid #000034;
+}
+
+button:hover {
+  background-color: #ffffff;
+  color: #9effc8;
+  border: 2px solid #9effc8;
+}

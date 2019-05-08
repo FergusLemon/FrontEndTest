@@ -1,0 +1,24 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  min-height: 50px;
+  max-height: 50px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  background-color: #282c34
+}
+
+.brand-name {
+  position: absolute;
+  top: -7px;
+  left: 10px;
+  padding: 2px;
+  font-size: 20px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: bold;
+  color: #ffffff;
+}
