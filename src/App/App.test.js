@@ -122,7 +122,7 @@ describe('The FX Service App', () => {
       mockForexConversionAPI.getRates.mockResolvedValue(conversionData)
     })
     afterEach(() => {
-      mockForexConversionAPI.getRates.mockClear()
+      jest.clearAllMocks()
     })
 
     it('calls the API when the user submits a price', async () => {
@@ -134,6 +134,42 @@ describe('The FX Service App', () => {
         .props()
         .doSearch()
       expect(getRatesSpy).toHaveBeenCalledTimes(1)
+    })
+    it('should set canSearch to false before the doSearch promise fires', () => {
+      const wrapper = shallow(<App />)
+      wrapper.setState({ value: userInput, canSearch: true })
+      wrapper
+        .find('PriceInput')
+        .props()
+        .doSearch()
+      expect(wrapper.state().canSearch).toBe(false)
+    })
+    it('should set canSearch to true after the doSearch promise fires', async () => {
+      const wrapper = shallow(<App />)
+      wrapper.setState({ value: userInput })
+      await wrapper
+        .find('PriceInput')
+        .props()
+        .doSearch()
+      expect(wrapper.state().canSearch).toBe(true)
+    })
+    it('should set canSearch to false if the value on state is an empty string', () => {
+      const wrapper = shallow(<App />)
+      wrapper.setState({ value: DEFAULT_VALUE })
+      expect(wrapper.state().canSearch).toBe(false)
+    })
+    it('should store the results from the API in the cache on state', async () => {
+      const wrapper = shallow(<App />)
+      wrapper.setState({ value: userInput })
+      await wrapper
+        .find('PriceInput')
+        .props()
+        .doSearch()
+      let keys = Object.keys(wrapper.state().cache)
+      let values = Object.values(wrapper.state().cache)
+      expect(keys.length).toBe(1)
+      expect(keys[0]).toBe(userInput.toString())
+      expect(values[0]).toBe(conversionData)
     })
   })
 })

@@ -11,7 +11,7 @@ class App extends React.Component {
     super(props)
     this.state = {
       value: '',
-      canSearch: true,
+      canSearch: false,
       cache: {},
     }
   }
@@ -31,13 +31,21 @@ class App extends React.Component {
   }
 
   doSearch = async () => {
+    this.setState({ canSearch: false })
+    const value = this.state.value
     await forexConversionAPI
-      .getRates(this.state.value)
+      .getRates(value)
       .then(results => {
-        this.setState({ cache: results })
+        this.setState({
+          cache: { [value]: results },
+          canSearch: true,
+        })
       })
       .catch(error => {
-        console.log(error)
+        this.setState({ canSearch: true })
+        console.log(
+          'Something went wrong with the search, please try again later.'
+        )
       })
   }
 
