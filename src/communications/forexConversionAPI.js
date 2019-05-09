@@ -9,6 +9,16 @@ class ForexConversionAPI {
       method: 'post',
       url: proxyURL + targetURL,
       data: { amount: value },
+      transformResponse: [
+        data => {
+          let parsedData = JSON.parse(data)
+          let formattedResults = {
+            USD: parseFloat(parsedData['USD'].toFixed(4)),
+            EUR: parseFloat(parsedData['EUR'].toFixed(4)),
+          }
+          return formattedResults
+        },
+      ],
     })
       .then(res => {
         return res.data
