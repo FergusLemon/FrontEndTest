@@ -2,7 +2,8 @@ import React from 'react'
 import App from './App'
 import { shallow, mount } from 'enzyme'
 import getElement from '../utils/getElement.js'
-import mockAxios from 'axios'
+import mockForexConversionAPI from '../communications/forexConversionAPI.js'
+jest.mock('../communications/forexConversionAPI.js')
 
 const DEFAULT_VALUE = ''
 
@@ -111,6 +112,28 @@ describe('The FX Service App', () => {
           .handleChange(ev)
         expect(wrapper.state().value).toBe(DEFAULT_VALUE)
       })
+    })
+  })
+
+  describe('Calling the FOREX rate conversion API', () => {
+    const conversionData = { USD: 1.5, EUR: 1.25 }
+    const userInput = 1
+    beforeEach(() => {
+      mockForexConversionAPI.getRates.mockResolvedValue(conversionData)
+    })
+    afterEach(() => {
+      mockForexConversionAPI.getRates.mockClear()
+    })
+
+    it('calls the API when the user submits a price', async () => {
+      const wrapper = shallow(<App />)
+      const getRatesSpy = jest.spyOn(mockForexConversionAPI, 'getRates')
+      wrapper.setState({ value: userInput })
+      await wrapper
+        .find('PriceInput')
+        .props()
+        .doSearch()
+      expect(getRatesSpy).toHaveBeenCalledTimes(1)
     })
   })
 })
