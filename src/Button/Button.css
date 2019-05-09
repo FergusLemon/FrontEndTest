@@ -1,12 +1,12 @@
 .button-container {
   position: relative;
   top: 85px;
-  left: 65px;
+  left: 25px;
   height: 40px;
   width: 200px;
 }
 
-.submit-rate-request {
+#Search, #Sort {
   position: absolute;
   left: 25px;
   background-color: #ffffff;
@@ -25,6 +25,6 @@ button:active {
 
 button:hover {
   background-color: #ffffff;
-  color: #9effc8;
+  color: #00662c;
   border: 2px solid #9effc8;
 }
