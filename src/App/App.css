@@ -1,3 +1,13 @@
 .App {
   text-align: center;
 }
+
+table {
+  position: relative;
+  top: 155px;
+  left: 25px;
+}
+
+th {
+  min-width: 200px
+}
