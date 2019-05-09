@@ -13,7 +13,7 @@ function PriceInput(props) {
         value={props.value}
         onChange={ev => props.handleChange(ev)}
         onKeyDown={ev =>
-          ev.key === 'Enter' && props.canSearch && props.doSearch(ev)
+          ev.key === 'Enter' && props.canSearch && props.doSearch()
         }
       />
     </div>
