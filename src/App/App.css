@@ -3,9 +3,9 @@
 }
 
 table {
-  position: relative;
-  top: 155px;
-  left: 25px;
+  position: absolute;
+  top: 125px;
+  left: 450px;
 }
 
 th {

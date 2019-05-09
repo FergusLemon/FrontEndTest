@@ -6,6 +6,8 @@ import mockForexConversionAPI from '../communications/forexConversionAPI.js'
 jest.mock('../communications/forexConversionAPI.js')
 
 const DEFAULT_VALUE = ''
+const result = [1, 2, 3]
+const anotherResult = [4, 5, 6]
 
 describe('The FX Service App', () => {
   it('renders without crashing', () => {
@@ -35,7 +37,7 @@ describe('The FX Service App', () => {
   })
   it('renders a sort button if there are results to sort', () => {
     const wrapper = mount(<App />)
-    wrapper.setState({ cache: { '1': { USD: 1.5 }, '2': { USD: 3 } } })
+    wrapper.setState({ history: [result, anotherResult] })
     expect(wrapper.find('#Sort').exists()).toBe(true)
     expect(wrapper.find('#Sort').text()).toBe('Sort')
   })
@@ -45,7 +47,7 @@ describe('The FX Service App', () => {
   })
   it('renders a table if there is atleast one result to display', () => {
     const wrapper = mount(<App />)
-    wrapper.setState({ cache: { '1': { USD: 1.5 } } })
+    wrapper.setState({ history: [result] })
     expect(getElement(wrapper)('table')('Currency-table').exists()).toBe(true)
   })
 
@@ -142,7 +144,6 @@ describe('The FX Service App', () => {
   describe('Calling the FOREX rate conversion API', () => {
     const conversionData = { USD: 1.5, EUR: 1.25 }
     const userInput = 1
-    const userInputString = '1'
     const getRatesSpy = jest.spyOn(mockForexConversionAPI, 'getRates')
     beforeEach(() => {
       mockForexConversionAPI.getRates.mockResolvedValue(conversionData)
@@ -176,25 +177,27 @@ describe('The FX Service App', () => {
     })
 
     describe('When the call to the API returns a resolved Promise', () => {
-      it('should store the results from the API in the cache on state', async () => {
+      it('should store the results from the API in the history on state', async () => {
         const wrapper = shallow(<App />)
         wrapper.setState({ value: userInput })
         await wrapper
           .find('PriceInput')
           .props()
           .doSearch()
-        let keys = Object.keys(wrapper.state().cache)
-        let values = Object.values(wrapper.state().cache)
-        expect(keys.length).toBe(1)
-        expect(keys[0]).toBe(userInputString)
-        expect(values[0]).toBe(conversionData)
+        let history = wrapper.state().history
+        let firstResult = history[0]
+        expect(history.length).toBe(1)
+        expect(firstResult[0]).toBe(userInput)
+        expect(firstResult[1]).toBe(conversionData['USD'])
+        expect(firstResult[2]).toBe(conversionData['EUR'])
       })
-      it('should not call the API if the search amount is already in the cache on state', async () => {
+      it('should not call the API if the amount has already been successfully searched for', async () => {
         const wrapper = shallow(<App />)
         wrapper.setState({
           value: userInput,
-          cache: { [userInputString]: conversionData },
+          history: [result],
         })
+        wrapper.instance().doSearch.cache = { [userInput]: {} }
         await wrapper
           .find('PriceInput')
           .props()
@@ -212,6 +215,50 @@ describe('The FX Service App', () => {
           .doSearch()
         expect(wrapper.state().value).toBe(DEFAULT_VALUE)
       })
+    })
+  })
+
+  describe('Displaying results', () => {
+    const tableHeadRow = 1
+    it('displays each new result on the page - case 1 result', () => {
+      const wrapper = mount(<App />)
+      wrapper.setState({ history: [result] })
+      let tableRows = wrapper.find('tr')
+      expect(tableRows.length - tableHeadRow).toBe(1)
+    })
+    it('displays each new result on the page - case 2 results', () => {
+      const wrapper = mount(<App />)
+      wrapper.setState({ history: [result, anotherResult] })
+      let tableRows = wrapper.find('tr')
+      expect(tableRows.length - tableHeadRow).toBe(2)
+    })
+  })
+
+  describe('Sorting results', () => {
+    let wrapper
+    const oneMoreResult = { USD: 5, EUR: 3.9 }
+    const userInput = 2.75
+    beforeEach(() => {
+      wrapper = shallow(<App />)
+      wrapper.setState({ history: [anotherResult, result] })
+    })
+    it('sorts the results in ascending order', () => {
+      wrapper.instance().sortResults()
+      expect(wrapper.state().history[0]).toBe(result)
+    })
+    it('sets canSort to false after sorting', () => {
+      wrapper.instance().sortResults()
+      expect(wrapper.state().canSort).toBe(false)
+    })
+    it('sets canSort to true when a new result is retrieved from the API', async () => {
+      mockForexConversionAPI.getRates.mockResolvedValue([oneMoreResult])
+      wrapper.setState({ value: userInput })
+      await wrapper
+        .find('PriceInput')
+        .props()
+        .doSearch()
+      expect(wrapper.state().canSort).toBe(true)
+      expect(wrapper.state().history.length).toBe(3)
     })
   })
 })

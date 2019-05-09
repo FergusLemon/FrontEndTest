@@ -4,6 +4,7 @@ import Header from '../Header/Header.js'
 import PriceInput from '../PriceInput/PriceInput.js'
 import Button from '../Button/Button.js'
 import validNumberRegex from '../utils/validNumberRegex.js'
+import numberFormatter from '../utils/numberFormatter.js'
 import forexConversionAPI from '../communications/forexConversionAPI.js'
 
 class App extends React.Component {
@@ -14,7 +15,7 @@ class App extends React.Component {
       value: this.DEFAULT_VALUE,
       canSearch: false,
       canSort: false,
-      cache: {},
+      history: [],
     }
   }
 
@@ -35,7 +36,10 @@ class App extends React.Component {
   doSearch = async () => {
     this.setState({ canSearch: false })
     const value = this.state.value
-    if (this.state.cache[value] !== undefined) {
+    if (!this.doSearch.cache) {
+      this.doSearch.cache = {}
+    }
+    if (this.doSearch.cache[value] !== undefined) {
       this.setState({ value: this.DEFAULT_VALUE })
       return
     }
@@ -44,8 +48,13 @@ class App extends React.Component {
       .then(results => {
         this.setState((state, props) => ({
           value: this.DEFAULT_VALUE,
-          cache: { ...state.cache, [value]: results },
+          canSort: true,
+          history: [
+            ...state.history,
+            [parseFloat(value), results['USD'], results['EUR']],
+          ],
         }))
+        this.doSearch.cache[value] = results
       })
       .catch(error => {
         this.setState({ value: this.DEFAULT_VALUE })
@@ -55,10 +64,33 @@ class App extends React.Component {
       })
   }
 
+  createTableBody = () => {
+    let history = this.state.history
+    let tableBody = []
+    for (let result of history) {
+      tableBody.push(
+        <tr key={result[0]}>
+          <td>{numberFormatter(result[0])}</td>
+          <td>{numberFormatter(result[1])}</td>
+          <td>{numberFormatter(result[2])}</td>
+        </tr>
+      )
+    }
+    return tableBody
+  }
+
+  sortResults = () => {
+    let history = this.state.history
+    let sortedHistory = history.sort((a, b) => {
+      return a[1] - b[1]
+    })
+    this.setState({ history: sortedHistory })
+  }
+
   render() {
-    let { value, cache, canSearch, canSort } = this.state
-    let canRenderTable = Object.keys(cache).length >= 1
-    let canRenderSort = Object.keys(cache).length >= 2
+    let { value, history, canSearch, canSort } = this.state
+    let canRenderTable = history.length > 0
+    let canRenderSort = history.length > 1
     return (
       <div className="App">
         <div className="App-header">
@@ -73,13 +105,13 @@ class App extends React.Component {
           />
         </div>
         <div className="Submit-button">
-          <Button clickHandler={this.doSearch} canClick={canSearch}>
+          <Button handleClick={this.doSearch} canClick={canSearch}>
             {'Search'}
           </Button>
         </div>
         {canRenderSort && (
           <div className="Sort-button">
-            <Button clickHandler={this.doSearch} canClick={canSort}>
+            <Button handleClick={this.sortResults} canClick={canSort}>
               {'Sort'}
             </Button>
           </div>
@@ -93,7 +125,7 @@ class App extends React.Component {
                 <th>€ EUR</th>
               </tr>
             </thead>
-            <tbody />
+            <tbody>{this.createTableBody()}</tbody>
           </table>
         )}
       </div>
