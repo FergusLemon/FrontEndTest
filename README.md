@@ -30,19 +30,15 @@ Visit `http:\\localhost:3000` in your favourite browser if it hasn't already ope
 
 All tests can be run from the root directory.
 
-Unit tests - Jest and Enzyme
+**Unit tests** - Jest and Enzyme
 
-`npm test` 
+`npm test` hit `a` to run all tests if nothing happens.
 
-hit `a` to run all tests if nothing happens.
-
-Functional tests - Cypress
+**Functional** tests - Cypress
 
 `npm start`
 
-`npm run cypress:open` 
-
-then hit `run all tests` in the Cypress window that opens up.
+`npm run cypress:open` then hit `run all tests` in the Cypress window that opens up.
 
 ### Technology
 
