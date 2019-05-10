@@ -28,9 +28,16 @@ Visit `http:\\localhost:3000` in your favourite browser if it hasn't already ope
 
 ### Testing
 
+All tests can be run from the root directory.
+
 Unit tests - Jest and Enzyme
 
+`npm test` hit `a` to run all tests if nothing happens.
+
 Functional tests - Cypress
+
+`npm start`
+`npm run cypress:open` then hit `run all tests` in the Cypress window that opens up.
 
 ### Technology
 
@@ -39,3 +46,11 @@ Languages - Javascript
 Front End - React, CSS
 
 Back End - Axios (for API calls)
+
+### Some ways to improve
+
+Better styling.
+
+Better test coverage and testing of edge cases.
+
+Allow users to sort the results in descending order.
