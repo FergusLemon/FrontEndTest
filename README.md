@@ -32,7 +32,9 @@ All tests can be run from the root directory.
 
 **Unit tests** - Jest and Enzyme
 
-`npm test` hit `a` to run all tests if nothing happens.
+`npm test` 
+
+Hit `a` to run all tests if nothing happens.
 
 **Functional** tests - Cypress
 
