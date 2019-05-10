@@ -9,4 +9,8 @@ cache:
 install:
   - npm ci
 script:
+  - npm run build
+  - npm start -- --silent &
+  - $(npm bin)/cypress run
+  - kill $(jobs -p) || true
   - npm test
