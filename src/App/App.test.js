@@ -218,6 +218,20 @@ describe('The FX Service App', () => {
     })
   })
 
+  describe('Displaying an error message when the API service is down', () => {
+    it('displays an error message to the user', async () => {
+      const err =
+        'The FOREX rate conversion service appears to be down, please try again later.'
+      mockForexConversionAPI.getRates.mockRejectedValue(err)
+      const wrapper = shallow(<App />)
+      await wrapper
+        .find('PriceInput')
+        .props()
+        .doSearch()
+      expect(wrapper.state().errorMessage.length).not.toBe(0)
+    })
+  })
+
   describe('Displaying results', () => {
     const tableHeadRow = 1
     it('displays each new result on the page - case 1 result', () => {

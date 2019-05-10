@@ -11,11 +11,14 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.DEFAULT_VALUE = ''
+    this.message = `The FOREX rate conversion service appears to be down,
+    please try again later.`
     this.state = {
       value: this.DEFAULT_VALUE,
       canSearch: false,
       canSort: false,
       history: [],
+      errorMessage: this.DEFAULT_VALUE,
     }
   }
 
@@ -53,11 +56,12 @@ class App extends React.Component {
             ...state.history,
             [parseFloat(value), results['USD'], results['EUR']],
           ],
+          errorMessage: this.DEFAULT_VALUE,
         }))
         this.doSearch.cache[value] = results
       })
       .catch(error => {
-        this.setState({ value: this.DEFAULT_VALUE })
+        this.setState({ value: this.DEFAULT_VALUE, errorMessage: this.message })
         console.log(
           'Something went wrong with the search, please try again later.'
         )
@@ -88,9 +92,10 @@ class App extends React.Component {
   }
 
   render() {
-    let { value, history, canSearch, canSort } = this.state
+    let { value, history, canSearch, canSort, errorMessage } = this.state
     let canRenderTable = history.length > 0
     let canRenderSort = history.length > 1
+    let showError = errorMessage.length > 0
     return (
       <div className="App">
         <div className="App-header">
@@ -128,6 +133,7 @@ class App extends React.Component {
             <tbody>{this.createTableBody()}</tbody>
           </table>
         )}
+        {showError && <p className="Error-message">{errorMessage}</p>}
       </div>
     )
   }

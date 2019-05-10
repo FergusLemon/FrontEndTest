@@ -11,3 +11,15 @@ table {
 th {
   min-width: 200px
 }
+
+.Error-message {
+  position: absolute;
+  top: 50px;
+  left: 500px;
+  min-width: 400px;
+  height: 30px;
+  padding: 5px;
+  background-color: #ff0000;
+  color: #ffffff;
+  overflow-wrap: normal;
+}
