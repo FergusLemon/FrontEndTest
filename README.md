@@ -8,11 +8,15 @@ A simple website that allows users to enter an amount in £GBP and retrieve the 
 
 ![Forex Service Homepage](/public/homepage.jpg)
 
+#### Design Decisions
+
+Certain design decisions were made which are easily changeable should the client want.  The maximum number of digits a user can enter into the search field is 12 followed by a maximum of 4 decimal places.  The response from the third party service is also trimmed to 4 decimal places.  These decisions were primarily made for formatting and styling purposes.
+
 ### Installation
 
 `git clone https://github.com/FergusLemon/FrontEndTest.git`
 
-`cd` into the `capco-front-end` dir.
+`cd` into the `FrontEndTest` dir.
 
 Run `npm install` to install dependencies.
 
